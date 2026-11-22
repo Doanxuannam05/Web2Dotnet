@@ -9,25 +9,35 @@ namespace DemoAPINET.Data
     {
         public static async Task SeedAsync(AppDbContext db)
         {
-            try
+            // Vòng lặp chờ database sẵn sàng (đặc biệt hữu ích khi chạy Docker hoặc SQL Server khởi động chậm)
+            for (int attempt = 1; attempt <= 6; attempt++)
             {
-                if (db.Database.IsRelational())
+                try
                 {
-                    try
+                    if (db.Database.IsRelational())
                     {
                         await db.Database.MigrateAsync();
                     }
-                    catch
+                    else
+                    {
+                        await db.Database.EnsureCreatedAsync();
+                    }
+                    Console.WriteLine("[DataSeeder] Kết nối và migrate Database thành công.");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[DataSeeder] Đang chờ SQL Server sẵn sàng (lần {attempt}/6): {ex.Message}");
+                    if (attempt == 6)
                     {
                         try { await db.Database.EnsureCreatedAsync(); } catch { }
                     }
-                }
-                else
-                {
-                    await db.Database.EnsureCreatedAsync();
+                    else
+                    {
+                        await Task.Delay(3000); // Đợi 3 giây trước khi thử lại
+                    }
                 }
             }
-            catch { }
 
             // 1. Seed danh mục Phòng ban
             try
