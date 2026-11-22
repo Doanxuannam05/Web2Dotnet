@@ -1,0 +1,8 @@
+**/.git
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/publish
+**/temp_keys
+**/*.user

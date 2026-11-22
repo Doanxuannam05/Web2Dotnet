@@ -1,0 +1,101 @@
+@DemoAPINET_HostAddress = http://localhost:5091
+@token = your_jwt_token_here
+
+### ========================================================
+### 1. ĐĂNG KÝ TÀI KHOẢN THEO ĐUÔI (.nv, .hr, .ad)
+### ========================================================
+
+# 1.1 Đăng ký tài khoản Nhân viên (bắt buộc đuôi .nv) -> Tự gán Role: Employee
+POST {{DemoAPINET_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "userName": "vanan.nv",
+  "fullName": "Nguyễn Văn An",
+  "email": "vanan@example.com",
+  "phoneNumber": "0987654321",
+  "password": "Password123@",
+  "confirmPassword": "Password123@"
+}
+
+###
+
+# 1.2 Đăng ký tài khoản Quản lý Nhân sự (bắt buộc đuôi .hr) -> Tự gán Role: HR
+POST {{DemoAPINET_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "userName": "ngoclan.hr",
+  "fullName": "Trần Ngọc Lan",
+  "email": "ngoclan@example.com",
+  "phoneNumber": "0912345678",
+  "password": "Password123@",
+  "confirmPassword": "Password123@"
+}
+
+###
+
+# 1.3 Đăng ký tài khoản Quản trị viên (bắt buộc đuôi .ad) -> Tự gán Role: Admin
+POST {{DemoAPINET_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "userName": "quantri.ad",
+  "fullName": "Lê Quản Trị",
+  "email": "quantri@example.com",
+  "phoneNumber": "0909999888",
+  "password": "Password123@",
+  "confirmPassword": "Password123@"
+}
+
+###
+
+# 1.4 Thử nghiệm đăng ký sai đuôi (Sẽ bị chặn và báo lỗi 400 Bad Request)
+POST {{DemoAPINET_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "userName": "nguyenvana",
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@example.com",
+  "password": "Password123@",
+  "confirmPassword": "Password123@"
+}
+
+###
+
+### ========================================================
+### 2. ĐĂNG NHẬP HỆ THỐNG
+### ========================================================
+# Đăng nhập Admin: admin.ad
+POST {{DemoAPINET_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin.ad",
+  "password": "Admin@123"
+}
+
+###
+
+# Đăng nhập HR: manager.hr
+POST {{DemoAPINET_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "manager.hr",
+  "password": "Hr@123"
+}
+
+###
+
+# Đăng nhập Nhân viên: hoanganh.nv
+POST {{DemoAPINET_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "hoanganh.nv",
+  "password": "User@123"
+}
+
+###
