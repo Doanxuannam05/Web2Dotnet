@@ -37,7 +37,28 @@
       }
     }
   </script>
+/* Frontend refinement: subtle interaction feedback */
+button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #7091E6;
+    outline-offset: 3px;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button {
+        transition: none;
+    }
+}
   <style>
     /* ========================================================
        WEB MOTION DESIGN SPECIFICATIONS (According to SKILL.md)
