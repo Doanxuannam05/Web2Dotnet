@@ -126,6 +126,8 @@ namespace DemoAPINET.Repositories
 
             List<DepartmentLeaveSummaryDto> summaries;
 
+            List<EmployeeLeaveSummaryDto> employeeSummaries = new();
+
             if (employeeId.HasValue)
             {
                 // Thống kê theo loại nghỉ phép của cá nhân nhân viên
@@ -156,6 +158,54 @@ namespace DemoAPINET.Repositories
                         ApprovedDays = g.Where(r => r.Status == LeaveStatus.Approved).Sum(r => r.TotalDays)
                     })
                     .ToListAsync();
+
+                // Thống kê chi tiết từng Nhân viên và HR cho Admin / Quản lý
+                var employees = await _context.Employees
+                    .Include(e => e.Department)
+                    .Include(e => e.User)
+                    .Include(e => e.LeaveRequests)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                employeeSummaries = employees.Select(e =>
+                {
+                    var userRole = e.User?.Role;
+                    if (string.IsNullOrWhiteSpace(userRole))
+                    {
+                        userRole = (e.Position != null && (e.Position.Contains("HR") || e.Position.Contains("Nhân sự")))
+                            ? "HR"
+                            : (e.Position != null && (e.Position.Contains("Quản trị") || e.Position.Contains("Giám đốc")))
+                                ? "Admin"
+                                : "Employee";
+                    }
+
+                    var totalReq = e.LeaveRequests?.Count ?? 0;
+                    var pendingReq = e.LeaveRequests?.Count(lr => lr.Status == LeaveStatus.Pending) ?? 0;
+                    var totalDaysReq = e.LeaveRequests?.Sum(lr => lr.TotalDays) ?? 0;
+                    var totalDaysApp = e.LeaveRequests?.Where(lr => lr.Status == LeaveStatus.Approved).Sum(lr => lr.TotalDays) ?? 0;
+
+                    return new EmployeeLeaveSummaryDto
+                    {
+                        EmployeeId = e.Id,
+                        UserId = e.UserId,
+                        UserName = e.User?.UserName ?? e.Email,
+                        FullName = e.FullName,
+                        Email = e.Email,
+                        Role = userRole,
+                        Position = e.Position ?? "Nhân viên",
+                        DepartmentName = e.Department?.Name ?? "Chưa phân phòng",
+                        AnnualLeaveQuota = e.AnnualLeaveQuota,
+                        RemainingLeaveDays = e.RemainingLeaveDays,
+                        TotalRequests = totalReq,
+                        PendingRequests = pendingReq,
+                        TotalDaysRequested = totalDaysReq,
+                        TotalDaysApproved = totalDaysApp
+                    };
+                })
+                .OrderBy(e => e.Role == "Admin" ? 0 : e.Role == "HR" ? 1 : 2)
+                .ThenByDescending(e => e.TotalDaysApproved)
+                .ThenByDescending(e => e.TotalDaysRequested)
+                .ToList();
             }
 
             return new LeaveStatisticsDto
@@ -165,7 +215,8 @@ namespace DemoAPINET.Repositories
                 ApprovedRequests = approved,
                 RejectedRequests = rejected,
                 TotalDaysOffApproved = totalDaysApproved,
-                DepartmentSummaries = summaries
+                DepartmentSummaries = summaries,
+                EmployeeSummaries = employeeSummaries
             };
         }
     }

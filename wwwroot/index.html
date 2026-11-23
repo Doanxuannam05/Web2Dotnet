@@ -1334,36 +1334,30 @@
                  transform: translate3d(0, 0, 0);
              }
          }
-    </style>
 
-          }
-        }
-      }
-    }
-  </script>
-/* Frontend refinement: subtle interaction feedback */
-button {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+         /* Frontend refinement: subtle interaction feedback */
+         button {
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+         }
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-    outline: 2px solid #7091E6;
-    outline-offset: 3px;
-}
+         button:focus-visible,
+         input:focus-visible,
+         select:focus-visible,
+         textarea:focus-visible {
+             outline: 2px solid #7091E6;
+             outline-offset: 3px;
+         }
 
-button:active {
-    transform: scale(0.98);
-}
+         button:active {
+             transform: scale(0.98);
+         }
 
-@media (prefers-reduced-motion: reduce) {
-    button {
-        transition: none;
-    }
-}
-  <style>
+         @media (prefers-reduced-motion: reduce) {
+             button {
+                 transition: none;
+             }
+         }
+
     /* ========================================================
        WEB MOTION DESIGN SPECIFICATIONS (According to SKILL.md)
        Exact 5-Color Palette Preserved: #3D52A0, #7091E6, #8697C4, #ADBBDA, #EDE8F5
@@ -2146,6 +2140,47 @@ button:active {
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- BẢNG THỐNG KÊ CHI TIẾT TẤT CẢ NHÂN VIÊN VÀ HR (DÀNH CHO ADMIN & HR) -->
+                    <div id="adminEmployeeStatsContainer" class="hidden mt-8 pt-6 border-t border-[#ADBBDA]/60">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <div>
+                                <h3 class="text-sm font-black text-[#3D52A0] uppercase tracking-wide flex items-center gap-2">
+                                    Danh sách Thống kê Chi tiết Nhân viên & HR
+                                    <span id="statEmployeeCountBadge" class="text-[10px] bg-[#3D52A0] text-white px-2 py-0.5 rounded-full font-bold">0 người</span>
+                                </h3>
+                                <p class="text-xs text-[#58678c]">Theo dõi toàn bộ số ngày đã xin nghỉ và số ngày đã được duyệt của từng nhân sự</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="employeeSearchInput" oninput="filterEmployeeStatsTable()" placeholder="Tìm theo tên, tài khoản..." class="text-xs px-3 py-1.5 rounded-xl border border-[#ADBBDA] bg-white text-[#3D52A0] outline-none focus:border-[#7091E6]">
+                                <select id="roleFilterSelect" onchange="filterEmployeeStatsTable()" class="text-xs px-3 py-1.5 rounded-xl border border-[#ADBBDA] bg-white text-[#3D52A0] outline-none font-bold">
+                                    <option value="ALL">Tất cả vai trò</option>
+                                    <option value="HR">Chỉ HR</option>
+                                    <option value="Employee">Chỉ Nhân viên</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-[#ADBBDA]/60">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-[#EDE8F5] text-[#3D52A0] uppercase text-[10px] tracking-wider font-bold border-b border-[#ADBBDA]/60">
+                                    <tr>
+                                        <th class="px-4 py-3">Nhân sự</th>
+                                        <th class="px-4 py-3 text-center">Vai trò</th>
+                                        <th class="px-4 py-3">Phòng ban & Chức vụ</th>
+                                        <th class="px-4 py-3 text-center font-black text-[#3D52A0]">Tổng ngày đã xin</th>
+                                        <th class="px-4 py-3 text-center font-black text-emerald-800">Tổng ngày đã duyệt</th>
+                                        <th class="px-4 py-3 text-center">Phép còn lại / Hạn mức</th>
+                                        <th class="px-4 py-3 text-center">Tổng số đơn</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeeSummaryTable" class="divide-y divide-[#ADBBDA]/40 text-[#1e2640]">
+                                    <tr><td colspan="7" class="text-center py-6 text-[#8697C4]">Đang tải danh sách nhân sự...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -2608,17 +2643,9 @@ button:active {
               document.getElementById('authHeaderZone').innerHTML = `
                 <div class="flex items-center space-x-2 bg-[#EDE8F5] border border-[#ADBBDA] px-3 py-1.5 rounded-xl">
                   <span class="text-xs font-bold text-[#3D52A0]">${username}</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full ${roleBadge} font-bold">${role}</span>
+                  <span class="text-[10px] px-2.5 py-0.5 rounded-full ${roleBadge} font-extrabold uppercase tracking-wider">${role}</span>
 
-                  <!-- Quick Role Switcher for Demo -->
-                  <select onchange="quickSwitchUser(this.value)" class="text-[11px] bg-white border border-[#ADBBDA] rounded-lg px-2 py-0.5 text-[#3D52A0] font-bold cursor-pointer outline-none">
-                    <option value="" disabled selected>Đổi vai trò</option>
-                    <option value="hoanganh.nv">hoanganh.nv (Nhân viên)</option>
-                    <option value="manager.hr">manager.hr (Quản lý HR)</option>
-                    <option value="admin.ad">admin.ad (Admin)</option>
-                  </select>
-
-                  <button onclick="logout()" class="ml-1 text-xs font-bold text-[#8697C4] hover:text-rose-600 transition btn-magnetic">
+                  <button onclick="logout()" class="ml-2 px-2.5 py-1 text-xs font-bold text-[#8697C4] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition btn-magnetic">
                     Đăng xuất
                   </button>
                 </div>
@@ -2634,19 +2661,6 @@ button:active {
               loadInitialData();
               initTiltEffect();
               initMagneticButtons();
-            }
-
-            async function quickSwitchUser(u) {
-              const p = u === 'admin.ad' ? 'Admin@123' : u === 'manager.hr' ? 'Hr@123' : 'User@123';
-              try {
-                const res = await axios.post(`${API_BASE}/auth/login`, { userName: u, password: p });
-                token = res.data.token;
-                localStorage.setItem('token', token);
-                showToast(`Đã chuyển sang tài khoản ${u}`, 'info');
-                showApp();
-              } catch(e) {
-                showToast('Không thể đổi tài khoản', 'error');
-              }
             }
 
             // [MỚI] Đăng xuất: giao diện zoom ra, lớp phủ lan ra, rồi form đăng nhập zoom vào
@@ -3062,6 +3076,8 @@ button:active {
               }
             }
 
+            let allEmployeeStatsData = [];
+
             async function loadStatistics() {
               try {
                 const isEmployee = currentUserRole === 'Employee';
@@ -3070,17 +3086,20 @@ button:active {
                 const subEl = document.getElementById('statHeaderSub');
                 const catTitleEl = document.getElementById('statTableCategoryTitle');
                 const col1El = document.getElementById('statCol1Header');
+                const adminEmpContainer = document.getElementById('adminEmployeeStatsContainer');
 
                 if (isEmployee) {
                   if (titleEl) titleEl.innerText = 'Báo cáo thống kê ngày nghỉ của bạn';
                   if (subEl) subEl.innerText = 'Tổng hợp chi tiết ngày nghỉ phép cá nhân đã sử dụng';
                   if (catTitleEl) catTitleEl.innerText = 'Chi tiết theo loại ngày nghỉ';
                   if (col1El) col1El.innerText = 'Loại nghỉ phép';
+                  if (adminEmpContainer) adminEmpContainer.classList.add('hidden');
                 } else {
                   if (titleEl) titleEl.innerText = 'Báo cáo tổng hợp số liệu toàn doanh nghiệp';
                   if (subEl) subEl.innerText = 'Thống kê ngày nghỉ tự động toàn bộ nhân sự các phòng ban';
                   if (catTitleEl) catTitleEl.innerText = 'Thống kê theo phòng ban';
                   if (col1El) col1El.innerText = 'Phòng ban';
+                  if (adminEmpContainer) adminEmpContainer.classList.remove('hidden');
                 }
 
                 const res = await axios.get(`${API_BASE}/leaverequests/statistics`);
@@ -3102,9 +3121,89 @@ button:active {
                 } else {
                   deptBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-[#8697C4]">${isEmployee ? 'Bạn chưa có dữ liệu ngày nghỉ nào.' : 'Chưa có số liệu phòng ban.'}</td></tr>`;
                 }
+
+                // Render Bảng Thống kê Chi tiết Nhân viên & HR cho Admin / HR
+                if (!isEmployee && data.employeeSummaries) {
+                  allEmployeeStatsData = data.employeeSummaries;
+                  renderEmployeeStatsTable(allEmployeeStatsData);
+                }
               } catch(e) {
                 console.error('Error loading statistics:', e);
               }
+            }
+
+            function renderEmployeeStatsTable(list) {
+              const empBody = document.getElementById('employeeSummaryTable');
+              const countBadge = document.getElementById('statEmployeeCountBadge');
+              if (countBadge) countBadge.innerText = `${list.length} người`;
+              if (!empBody) return;
+
+              if (!list || list.length === 0) {
+                empBody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-[#8697C4]">Không tìm thấy nhân sự phù hợp.</td></tr>`;
+                return;
+              }
+
+              empBody.innerHTML = list.map(e => {
+                const roleBadge = e.role === 'Admin' ? 'bg-[#3D52A0] text-white' :
+                                  e.role === 'HR' ? 'bg-[#7091E6] text-white' :
+                                  'bg-[#ADBBDA] text-[#3D52A0]';
+                const roleLabel = e.role === 'Admin' ? 'Admin' :
+                                  e.role === 'HR' ? 'Quản lý HR' : 'Nhân viên';
+
+                return `
+                  <tr class="hover:bg-white/80 transition">
+                    <td class="px-4 py-3">
+                      <div class="font-extrabold text-[#3D52A0] text-sm">${e.fullName}</div>
+                      <div class="text-[11px] text-[#8697C4] font-mono">${e.userName || e.email}</div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${roleBadge}">${roleLabel}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="font-bold text-[#1e2640]">${e.departmentName}</div>
+                      <div class="text-[11px] text-[#58678c]">${e.position}</div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="inline-block px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 font-black text-[#3D52A0] text-xs">
+                        ${e.totalDaysRequested} ngày
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 font-black text-emerald-800 text-xs">
+                        ${e.totalDaysApproved} ngày
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                      <div class="font-bold text-xs ${e.remainingLeaveDays <= 3 ? 'text-amber-700' : 'text-[#3D52A0]'}">
+                        ${e.remainingLeaveDays} / ${e.annualLeaveQuota} ngày
+                      </div>
+                      <div class="w-20 mx-auto bg-gray-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-[#7091E6] h-full rounded-full" style="width: ${(e.remainingLeaveDays / e.annualLeaveQuota) * 100}%"></div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="font-bold text-[#58678c]">${e.totalRequests} đơn</span>
+                      ${e.pendingRequests > 0 ? `<span class="ml-1 px-1.5 py-0.5 text-[9px] bg-amber-100 text-amber-800 font-bold rounded-full">${e.pendingRequests} chờ</span>` : ''}
+                    </td>
+                  </tr>
+                `;
+              }).join('');
+            }
+
+            function filterEmployeeStatsTable() {
+              const keyword = (document.getElementById('employeeSearchInput')?.value || '').toLowerCase().trim();
+              const roleFilter = document.getElementById('roleFilterSelect')?.value || 'ALL';
+
+              let filtered = allEmployeeStatsData.filter(e => {
+                const matchRole = roleFilter === 'ALL' || e.role === roleFilter;
+                const matchName = e.fullName.toLowerCase().includes(keyword) || 
+                                  (e.userName && e.userName.toLowerCase().includes(keyword)) ||
+                                  (e.departmentName && e.departmentName.toLowerCase().includes(keyword)) ||
+                                  (e.position && e.position.toLowerCase().includes(keyword));
+                return matchRole && matchName;
+              });
+
+              renderEmployeeStatsTable(filtered);
             }
 
             // Detail Modal Actions
@@ -3158,25 +3257,40 @@ button:active {
 
             // CSV Export for Statistics
             function exportStatisticsCSV() {
-              const table = document.getElementById('deptSummaryTable');
-              if (!table) return;
               const isEmployee = currentUserRole === 'Employee';
-              let csv = isEmployee ? "Loai nghi phep,So luong don,Tong ngay nghi da duyet\n" : "Phong ban,So luong don,Tong ngay nghi da duyet\n";
-              const rows = table.querySelectorAll('tr');
-              rows.forEach(tr => {
-                const cols = tr.querySelectorAll('td');
-                if (cols.length === 3) {
-                  const col1 = cols[0].innerText.replace(/,/g, '');
-                  const col2 = cols[1].innerText.replace(/,/g, '');
-                  const col3 = cols[2].innerText.replace(/,/g, '');
-                  csv += `${col1},${col2},${col3}\n`;
-                }
-              });
+              let csv = '';
+
+              if (!isEmployee && allEmployeeStatsData && allEmployeeStatsData.length > 0) {
+                csv = "Nhan su,Tai khoan,Vai tro,Phong ban,Chuc vu,Tong ngay da xin,Tong ngay da duyet,Phep con lai,Han muc,Tong don,Cho duyet\n";
+                allEmployeeStatsData.forEach(e => {
+                  const name = (e.fullName || '').replace(/,/g, ' ');
+                  const user = (e.userName || e.email || '').replace(/,/g, ' ');
+                  const role = e.role || 'Employee';
+                  const dept = (e.departmentName || '-').replace(/,/g, ' ');
+                  const pos = (e.position || '-').replace(/,/g, ' ');
+                  csv += `${name},${user},${role},${dept},${pos},${e.totalDaysRequested},${e.totalDaysApproved},${e.remainingLeaveDays},${e.annualLeaveQuota},${e.totalRequests},${e.pendingRequests}\n`;
+                });
+              } else {
+                const table = document.getElementById('deptSummaryTable');
+                if (!table) return;
+                csv = isEmployee ? "Loai nghi phep,So luong don,Tong ngay nghi da duyet\n" : "Phong ban,So luong don,Tong ngay nghi da duyet\n";
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(tr => {
+                  const cols = tr.querySelectorAll('td');
+                  if (cols.length === 3) {
+                    const col1 = cols[0].innerText.replace(/,/g, '');
+                    const col2 = cols[1].innerText.replace(/,/g, '');
+                    const col3 = cols[2].innerText.replace(/,/g, '');
+                    csv += `${col1},${col2},${col3}\n`;
+                  }
+                });
+              }
+
               const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = isEmployee ? `Bao_Cao_Ngay_Nghi_Ca_Nhan_${new Date().toISOString().slice(0,10)}.csv` : `Bao_Cao_Ngay_Nghi_Doanh_Nghiep_${new Date().toISOString().slice(0,10)}.csv`;
+              a.download = isEmployee ? `Bao_Cao_Ngay_Nghi_Ca_Nhan_${new Date().toISOString().slice(0,10)}.csv` : `Thong_Ke_Ngay_Nghi_Nhan_Vien_HR_${new Date().toISOString().slice(0,10)}.csv`;
               a.click();
               URL.revokeObjectURL(url);
               showToast('Đã xuất file báo cáo CSV thành công', 'success');

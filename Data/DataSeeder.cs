@@ -244,6 +244,54 @@ namespace DemoAPINET.Data
                 }
 
                 await db.SaveChangesAsync();
+
+                // 7. Seed một số đơn xin nghỉ mẫu để Admin và HR thấy số liệu thống kê ngay
+                if (!await db.LeaveRequests.AnyAsync())
+                {
+                    var annualLeaveType = await db.LeaveTypes.FirstOrDefaultAsync(lt => lt.Name.Contains("phép năm")) ?? await db.LeaveTypes.FirstOrDefaultAsync();
+                    var sickLeaveType = await db.LeaveTypes.FirstOrDefaultAsync(lt => lt.Name.Contains("ốm")) ?? await db.LeaveTypes.FirstOrDefaultAsync();
+
+                    var emp = await db.Employees.FirstOrDefaultAsync(e => e.Email == "hoanganh.nv@company.com");
+                    var hr = await db.Employees.FirstOrDefaultAsync(e => e.Email == "manager.hr@company.com");
+
+                    if (emp != null && annualLeaveType != null)
+                    {
+                        await db.LeaveRequests.AddAsync(new LeaveRequest
+                        {
+                            EmployeeId = emp.Id,
+                            LeaveTypeId = annualLeaveType.Id,
+                            StartDate = DateTime.UtcNow.Date.AddDays(-10),
+                            EndDate = DateTime.UtcNow.Date.AddDays(-9),
+                            TotalDays = 2,
+                            Reason = "Nghỉ phép gia đình có việc",
+                            Status = LeaveStatus.Approved,
+                            ApprovedByUserId = hrUser?.Id,
+                            UpdatedAt = DateTime.UtcNow.AddDays(-10),
+                            CreatedAt = DateTime.UtcNow.AddDays(-12)
+                        });
+                        emp.RemainingLeaveDays = 10;
+                    }
+
+                    if (hr != null && sickLeaveType != null)
+                    {
+                        await db.LeaveRequests.AddAsync(new LeaveRequest
+                        {
+                            EmployeeId = hr.Id,
+                            LeaveTypeId = sickLeaveType.Id,
+                            StartDate = DateTime.UtcNow.Date.AddDays(-5),
+                            EndDate = DateTime.UtcNow.Date.AddDays(-4),
+                            TotalDays = 2,
+                            Reason = "Nghỉ điều trị sức khỏe theo chỉ định bác sĩ",
+                            Status = LeaveStatus.Approved,
+                            ApprovedByUserId = adminUser?.Id,
+                            UpdatedAt = DateTime.UtcNow.AddDays(-5),
+                            CreatedAt = DateTime.UtcNow.AddDays(-6)
+                        });
+                        hr.RemainingLeaveDays = 10;
+                    }
+
+                    await db.SaveChangesAsync();
+                }
             }
             catch { }
         }
